@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: hackton
+  datasource:
+    url: ${DB_URL:jdbc:mysql://localhost:3306/hackton?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:alecio}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+  flyway:
+    enabled: true
+
+server:
+  servlet:
+    context-path: /api/v1
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:hackton-sus-development-secret-key-with-at-least-256-bits}
+    expiration-minutes: ${JWT_EXPIRATION_MINUTES:120}

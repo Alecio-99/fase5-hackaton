@@ -1,0 +1,734 @@
+openapi: 3.0.3
+info:
+  title: Hackathon SUS API
+  version: 1.0.0
+  description: API REST para triagem, fila inteligente e antifalta no SUS.
+servers:
+  - url: /api/v1
+security:
+  - bearerAuth: []
+tags:
+  - name: Auth
+  - name: Pacientes
+  - name: UnidadesSaude
+  - name: Triagens
+  - name: Fila
+  - name: Consultas
+  - name: ListaEspera
+  - name: Dashboard
+paths:
+  /auth/login:
+    post:
+      tags: [Auth]
+      operationId: login
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Autenticado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+  /auth/register:
+    post:
+      tags: [Auth]
+      operationId: register
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '201':
+          description: Usuario criado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+  /pacientes:
+    get:
+      tags: [Pacientes]
+      operationId: listarPacientes
+      responses:
+        '200':
+          description: Pacientes cadastrados
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PacienteResponse'
+    post:
+      tags: [Pacientes]
+      operationId: criarPaciente
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PacienteRequest'
+      responses:
+        '201':
+          description: Paciente criado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PacienteResponse'
+  /pacientes/{id}:
+    get:
+      tags: [Pacientes]
+      operationId: buscarPacientePorId
+      parameters:
+        - $ref: '#/components/parameters/IdPath'
+      responses:
+        '200':
+          description: Paciente encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PacienteResponse'
+    put:
+      tags: [Pacientes]
+      operationId: atualizarPaciente
+      parameters:
+        - $ref: '#/components/parameters/IdPath'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PacienteRequest'
+      responses:
+        '200':
+          description: Paciente atualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PacienteResponse'
+    delete:
+      tags: [Pacientes]
+      operationId: excluirPaciente
+      parameters:
+        - $ref: '#/components/parameters/IdPath'
+      responses:
+        '204':
+          description: Paciente excluido
+  /pacientes/cpf/{cpf}:
+    get:
+      tags: [Pacientes]
+      operationId: buscarPacientePorCpf
+      parameters:
+        - name: cpf
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Paciente encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PacienteResponse'
+  /unidades-saude:
+    get:
+      tags: [UnidadesSaude]
+      operationId: listarUnidades
+      responses:
+        '200':
+          description: Unidades cadastradas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UnidadeSaudeResponse'
+    post:
+      tags: [UnidadesSaude]
+      operationId: criarUnidade
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UnidadeSaudeRequest'
+      responses:
+        '201':
+          description: Unidade criada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnidadeSaudeResponse'
+  /unidades-saude/{id}:
+    get:
+      tags: [UnidadesSaude]
+      operationId: buscarUnidadePorId
+      parameters:
+        - $ref: '#/components/parameters/IdPath'
+      responses:
+        '200':
+          description: Unidade encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnidadeSaudeResponse'
+    put:
+      tags: [UnidadesSaude]
+      operationId: atualizarUnidade
+      parameters:
+        - $ref: '#/components/parameters/IdPath'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UnidadeSaudeRequest'
+      responses:
+        '200':
+          description: Unidade atualizada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnidadeSaudeResponse'
+    delete:
+      tags: [UnidadesSaude]
+      operationId: excluirUnidade
+      parameters:
+        - $ref: '#/components/parameters/IdPath'
+      responses:
+        '204':
+          description: Unidade excluida
+  /triagens:
+    post:
+      tags: [Triagens]
+      operationId: criarTriagem
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TriagemRequest'
+      responses:
+        '201':
+          description: Triagem registrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TriagemResponse'
+  /triagens/{id}:
+    get:
+      tags: [Triagens]
+      operationId: buscarTriagemPorId
+      parameters:
+        - $ref: '#/components/parameters/IdPath'
+      responses:
+        '200':
+          description: Triagem encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TriagemResponse'
+  /fila:
+    post:
+      tags: [Fila]
+      operationId: entrarNaFila
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FilaEntradaRequest'
+      responses:
+        '201':
+          description: Entrada registrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FilaResponse'
+  /fila/{id}/posicao:
+    get:
+      tags: [Fila]
+      operationId: consultarPosicao
+      parameters:
+        - $ref: '#/components/parameters/IdPath'
+      responses:
+        '200':
+          description: Posicao na fila
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FilaPosicaoResponse'
+  /fila/unidades/{unidadeId}/proximo:
+    post:
+      tags: [Fila]
+      operationId: chamarProximoPaciente
+      parameters:
+        - name: unidadeId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Proximo paciente chamado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FilaResponse'
+  /fila/{id}/finalizar:
+    post:
+      tags: [Fila]
+      operationId: finalizarAtendimento
+      parameters:
+        - $ref: '#/components/parameters/IdPath'
+      responses:
+        '200':
+          description: Atendimento finalizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FilaResponse'
+  /fila/{id}/cancelar:
+    post:
+      tags: [Fila]
+      operationId: cancelarAtendimento
+      parameters:
+        - $ref: '#/components/parameters/IdPath'
+      responses:
+        '200':
+          description: Atendimento cancelado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FilaResponse'
+  /consultas:
+    post:
+      tags: [Consultas]
+      operationId: agendarConsulta
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsultaRequest'
+      responses:
+        '201':
+          description: Consulta agendada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsultaResponse'
+  /consultas/{id}/confirmar:
+    post:
+      tags: [Consultas]
+      operationId: confirmarConsulta
+      parameters:
+        - $ref: '#/components/parameters/IdPath'
+      responses:
+        '200':
+          description: Consulta confirmada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsultaResponse'
+  /consultas/{id}/cancelar:
+    post:
+      tags: [Consultas]
+      operationId: cancelarConsulta
+      parameters:
+        - $ref: '#/components/parameters/IdPath'
+      responses:
+        '200':
+          description: Consulta cancelada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsultaResponse'
+  /consultas/{id}/falta:
+    post:
+      tags: [Consultas]
+      operationId: registrarFalta
+      parameters:
+        - $ref: '#/components/parameters/IdPath'
+      responses:
+        '200':
+          description: Falta registrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsultaResponse'
+  /consultas/{id}/comparecimento:
+    post:
+      tags: [Consultas]
+      operationId: registrarComparecimento
+      parameters:
+        - $ref: '#/components/parameters/IdPath'
+      responses:
+        '200':
+          description: Comparecimento registrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsultaResponse'
+  /lista-espera:
+    post:
+      tags: [ListaEspera]
+      operationId: cadastrarNaListaEspera
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ListaEsperaRequest'
+      responses:
+        '201':
+          description: Registro criado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListaEsperaResponse'
+    get:
+      tags: [ListaEspera]
+      operationId: listarEspera
+      responses:
+        '200':
+          description: Lista de espera
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ListaEsperaResponse'
+  /dashboard:
+    get:
+      tags: [Dashboard]
+      operationId: obterDashboard
+      responses:
+        '200':
+          description: Estatisticas gerenciais
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DashboardResponse'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    IdPath:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+  schemas:
+    LoginRequest:
+      type: object
+      required: [email, senha]
+      properties:
+        email:
+          type: string
+          format: email
+        senha:
+          type: string
+          minLength: 6
+    RegisterRequest:
+      type: object
+      required: [nome, email, senha, perfil]
+      properties:
+        nome:
+          type: string
+        email:
+          type: string
+          format: email
+        senha:
+          type: string
+          minLength: 6
+        perfil:
+          $ref: '#/components/schemas/Perfil'
+    AuthResponse:
+      type: object
+      properties:
+        token:
+          type: string
+        tipo:
+          type: string
+          example: Bearer
+        usuario:
+          $ref: '#/components/schemas/UsuarioResponse'
+    UsuarioResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        nome:
+          type: string
+        email:
+          type: string
+        perfil:
+          $ref: '#/components/schemas/Perfil'
+    Perfil:
+      type: string
+      enum: [ADMIN, PROFISSIONAL_SAUDE, RECEPCAO]
+    PacienteRequest:
+      type: object
+      required: [nome, cpf, dataNascimento, telefone, endereco, cartaoSus]
+      properties:
+        nome:
+          type: string
+        cpf:
+          type: string
+        dataNascimento:
+          type: string
+          format: date
+        telefone:
+          type: string
+        email:
+          type: string
+          format: email
+        endereco:
+          type: string
+        cartaoSus:
+          type: string
+    PacienteResponse:
+      allOf:
+        - $ref: '#/components/schemas/PacienteRequest'
+        - type: object
+          properties:
+            id:
+              type: integer
+              format: int64
+            dataCadastro:
+              type: string
+              format: date-time
+    UnidadeSaudeRequest:
+      type: object
+      required: [nome, tipo, endereco, telefone, capacidadeAtendimento]
+      properties:
+        nome:
+          type: string
+        tipo:
+          $ref: '#/components/schemas/TipoUnidade'
+        endereco:
+          type: string
+        telefone:
+          type: string
+        capacidadeAtendimento:
+          type: integer
+          minimum: 1
+    UnidadeSaudeResponse:
+      allOf:
+        - $ref: '#/components/schemas/UnidadeSaudeRequest'
+        - type: object
+          properties:
+            id:
+              type: integer
+              format: int64
+    TipoUnidade:
+      type: string
+      enum: [UBS, UPA, HOSPITAL]
+    TriagemRequest:
+      type: object
+      required: [pacienteId, respostas]
+      properties:
+        pacienteId:
+          type: integer
+          format: int64
+        respostas:
+          $ref: '#/components/schemas/RespostasTriagem'
+        observacoes:
+          type: string
+    RespostasTriagem:
+      type: object
+      properties:
+        possuiFebre:
+          type: boolean
+        possuiFaltaDeAr:
+          type: boolean
+        possuiDorIntensa:
+          type: boolean
+        possuiSangramento:
+          type: boolean
+        possuiTontura:
+          type: boolean
+    TriagemResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        pacienteId:
+          type: integer
+          format: int64
+        dataTriagem:
+          type: string
+          format: date-time
+        respostas:
+          $ref: '#/components/schemas/RespostasTriagem'
+        classificacaoRisco:
+          $ref: '#/components/schemas/ClassificacaoRisco'
+        observacoes:
+          type: string
+    ClassificacaoRisco:
+      type: string
+      enum: [VERMELHO, LARANJA, AMARELO, VERDE, AZUL]
+    FilaEntradaRequest:
+      type: object
+      required: [pacienteId, unidadeSaudeId, triagemId]
+      properties:
+        pacienteId:
+          type: integer
+          format: int64
+        unidadeSaudeId:
+          type: integer
+          format: int64
+        triagemId:
+          type: integer
+          format: int64
+    FilaResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        pacienteId:
+          type: integer
+          format: int64
+        unidadeSaudeId:
+          type: integer
+          format: int64
+        classificacaoRisco:
+          $ref: '#/components/schemas/ClassificacaoRisco'
+        horarioEntrada:
+          type: string
+          format: date-time
+        status:
+          $ref: '#/components/schemas/StatusFila'
+    FilaPosicaoResponse:
+      type: object
+      properties:
+        filaId:
+          type: integer
+          format: int64
+        posicao:
+          type: integer
+    StatusFila:
+      type: string
+      enum: [AGUARDANDO, EM_ATENDIMENTO, FINALIZADO, CANCELADO]
+    ConsultaRequest:
+      type: object
+      required: [pacienteId, unidadeSaudeId, dataHoraConsulta, especialidade]
+      properties:
+        pacienteId:
+          type: integer
+          format: int64
+        unidadeSaudeId:
+          type: integer
+          format: int64
+        dataHoraConsulta:
+          type: string
+          format: date-time
+        especialidade:
+          type: string
+    ConsultaResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        pacienteId:
+          type: integer
+          format: int64
+        unidadeSaudeId:
+          type: integer
+          format: int64
+        dataHoraConsulta:
+          type: string
+          format: date-time
+        especialidade:
+          type: string
+        status:
+          $ref: '#/components/schemas/StatusConsulta'
+    StatusConsulta:
+      type: string
+      enum: [AGENDADA, CONFIRMADA, CANCELADA, REALIZADA, FALTOU]
+    ListaEsperaRequest:
+      type: object
+      required: [pacienteId, especialidade, prioridade]
+      properties:
+        pacienteId:
+          type: integer
+          format: int64
+        especialidade:
+          type: string
+        prioridade:
+          type: integer
+          minimum: 1
+    ListaEsperaResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        pacienteId:
+          type: integer
+          format: int64
+        especialidade:
+          type: string
+        prioridade:
+          type: integer
+        dataCadastro:
+          type: string
+          format: date-time
+    DashboardResponse:
+      type: object
+      properties:
+        quantidadePacientes:
+          type: integer
+          format: int64
+        consultasAgendadas:
+          type: integer
+          format: int64
+        consultasRealizadas:
+          type: integer
+          format: int64
+        consultasPerdidas:
+          type: integer
+          format: int64
+        taxaAbsenteismo:
+          type: number
+          format: double
+        pacientesEmFila:
+          type: integer
+          format: int64
+        atendimentosPorClassificacaoRisco:
+          type: object
+          additionalProperties:
+            type: integer
+            format: int64
+    ErrorResponse:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        status:
+          type: integer
+        error:
+          type: string
+        message:
+          type: string
+        path:
+          type: string

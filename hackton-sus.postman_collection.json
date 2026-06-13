@@ -1,0 +1,808 @@
+{
+  "info": {
+    "_postman_id": "9d2b7671-7c84-4c5c-92d7-6f74f7c6b4a1",
+    "name": "Hackathon SUS API",
+    "description": "Collection para testar a API Hackathon SUS gerada a partir do contrato OpenAPI.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": []
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": []
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080/api/v1",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "pacienteId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "cpf",
+      "value": "12345678901",
+      "type": "string"
+    },
+    {
+      "key": "unidadeId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "triagemId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "filaId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "consultaId",
+      "value": "1",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Login com sucesso', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "const response = pm.response.json();",
+                  "if (response.token) {",
+                  "  pm.collectionVariables.set('token', response.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@sus.local\",\n  \"senha\": \"admin123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Registrar Usuario",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Profissional Saude\",\n  \"email\": \"profissional@sus.local\",\n  \"senha\": \"prof123\",\n  \"perfil\": \"PROFISSIONAL_SAUDE\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Pacientes",
+      "item": [
+        {
+          "name": "Criar Paciente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Paciente criado', function () {",
+                  "  pm.response.to.have.status(201);",
+                  "});",
+                  "const response = pm.response.json();",
+                  "if (response.id) pm.collectionVariables.set('pacienteId', response.id);",
+                  "if (response.cpf) pm.collectionVariables.set('cpf', response.cpf);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Maria da Silva\",\n  \"cpf\": \"12345678901\",\n  \"dataNascimento\": \"1990-05-20\",\n  \"telefone\": \"11999999999\",\n  \"email\": \"maria@email.com\",\n  \"endereco\": \"Rua Central, 100\",\n  \"cartaoSus\": \"700000000000001\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/pacientes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pacientes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar Pacientes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/pacientes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pacientes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Buscar Paciente Por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/pacientes/{{pacienteId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pacientes",
+                "{{pacienteId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Buscar Paciente Por CPF",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/pacientes/cpf/{{cpf}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pacientes",
+                "cpf",
+                "{{cpf}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Atualizar Paciente",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Maria da Silva Atualizada\",\n  \"cpf\": \"{{cpf}}\",\n  \"dataNascimento\": \"1990-05-20\",\n  \"telefone\": \"11888888888\",\n  \"email\": \"maria.atualizada@email.com\",\n  \"endereco\": \"Rua Central, 200\",\n  \"cartaoSus\": \"700000000000001\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/pacientes/{{pacienteId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pacientes",
+                "{{pacienteId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Excluir Paciente",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/pacientes/{{pacienteId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pacientes",
+                "{{pacienteId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Unidades de Saude",
+      "item": [
+        {
+          "name": "Criar Unidade",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Unidade criada', function () {",
+                  "  pm.response.to.have.status(201);",
+                  "});",
+                  "const response = pm.response.json();",
+                  "if (response.id) pm.collectionVariables.set('unidadeId', response.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"UBS Centro\",\n  \"tipo\": \"UBS\",\n  \"endereco\": \"Av. Principal, 10\",\n  \"telefone\": \"1133334444\",\n  \"capacidadeAtendimento\": 120\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/unidades-saude",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "unidades-saude"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar Unidades",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/unidades-saude",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "unidades-saude"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Buscar Unidade Por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/unidades-saude/{{unidadeId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "unidades-saude",
+                "{{unidadeId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Atualizar Unidade",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"UBS Centro Atualizada\",\n  \"tipo\": \"UBS\",\n  \"endereco\": \"Av. Principal, 20\",\n  \"telefone\": \"1133335555\",\n  \"capacidadeAtendimento\": 150\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/unidades-saude/{{unidadeId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "unidades-saude",
+                "{{unidadeId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Excluir Unidade",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/unidades-saude/{{unidadeId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "unidades-saude",
+                "{{unidadeId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Triagens",
+      "item": [
+        {
+          "name": "Criar Triagem",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Triagem criada', function () {",
+                  "  pm.response.to.have.status(201);",
+                  "});",
+                  "const response = pm.response.json();",
+                  "if (response.id) pm.collectionVariables.set('triagemId', response.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pacienteId\": {{pacienteId}},\n  \"respostas\": {\n    \"possuiFebre\": true,\n    \"possuiFaltaDeAr\": false,\n    \"possuiDorIntensa\": true,\n    \"possuiSangramento\": false,\n    \"possuiTontura\": false\n  },\n  \"observacoes\": \"Paciente relata dor intensa.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/triagens",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "triagens"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Buscar Triagem Por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/triagens/{{triagemId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "triagens",
+                "{{triagemId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Fila",
+      "item": [
+        {
+          "name": "Entrar Na Fila",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Entrada na fila criada', function () {",
+                  "  pm.response.to.have.status(201);",
+                  "});",
+                  "const response = pm.response.json();",
+                  "if (response.id) pm.collectionVariables.set('filaId', response.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pacienteId\": {{pacienteId}},\n  \"unidadeSaudeId\": {{unidadeId}},\n  \"triagemId\": {{triagemId}}\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/fila",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "fila"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Consultar Posicao",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/fila/{{filaId}}/posicao",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "fila",
+                "{{filaId}}",
+                "posicao"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Chamar Proximo Paciente",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/fila/unidades/{{unidadeId}}/proximo",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "fila",
+                "unidades",
+                "{{unidadeId}}",
+                "proximo"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Finalizar Atendimento",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/fila/{{filaId}}/finalizar",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "fila",
+                "{{filaId}}",
+                "finalizar"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cancelar Atendimento",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/fila/{{filaId}}/cancelar",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "fila",
+                "{{filaId}}",
+                "cancelar"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Consultas",
+      "item": [
+        {
+          "name": "Agendar Consulta",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Consulta agendada', function () {",
+                  "  pm.response.to.have.status(201);",
+                  "});",
+                  "const response = pm.response.json();",
+                  "if (response.id) pm.collectionVariables.set('consultaId', response.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pacienteId\": {{pacienteId}},\n  \"unidadeSaudeId\": {{unidadeId}},\n  \"dataHoraConsulta\": \"2026-07-01T10:00:00-03:00\",\n  \"especialidade\": \"CLINICO_GERAL\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/consultas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "consultas"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Confirmar Consulta",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/consultas/{{consultaId}}/confirmar",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "consultas",
+                "{{consultaId}}",
+                "confirmar"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cancelar Consulta",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/consultas/{{consultaId}}/cancelar",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "consultas",
+                "{{consultaId}}",
+                "cancelar"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Registrar Falta",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/consultas/{{consultaId}}/falta",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "consultas",
+                "{{consultaId}}",
+                "falta"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Registrar Comparecimento",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/consultas/{{consultaId}}/comparecimento",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "consultas",
+                "{{consultaId}}",
+                "comparecimento"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Lista de Espera",
+      "item": [
+        {
+          "name": "Cadastrar Na Lista",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pacienteId\": {{pacienteId}},\n  \"especialidade\": \"CLINICO_GERAL\",\n  \"prioridade\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/lista-espera",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "lista-espera"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar Lista de Espera",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/lista-espera",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "lista-espera"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Dashboard",
+      "item": [
+        {
+          "name": "Obter Dashboard",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/dashboard",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "dashboard"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
