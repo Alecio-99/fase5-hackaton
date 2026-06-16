@@ -1,0 +1,37 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: hackton-mysql
+    environment:
+      MYSQL_DATABASE: ${DB_NAME:-hackton}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-root}
+    ports:
+      - "${DB_PORT:-3306}:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p${DB_PASSWORD:-root}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  app:
+    build: .
+    container_name: hackton-app
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:mysql://mysql:3306/${DB_NAME:-hackton}?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      DB_USERNAME: root
+      DB_PASSWORD: ${DB_PASSWORD:-root}
+      JWT_SECRET: ${JWT_SECRET:-hackton-sus-development-secret-key-with-at-least-256-bits}
+      JWT_EXPIRATION_MINUTES: ${JWT_EXPIRATION_MINUTES:-120}
+      APP_ADMIN_EMAIL: ${APP_ADMIN_EMAIL:-admin@sus.local}
+      APP_ADMIN_PASSWORD: ${APP_ADMIN_PASSWORD:-admin123}
+    ports:
+      - "${APP_PORT:-8080}:8080"
+
+volumes:
+  mysql-data:

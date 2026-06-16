@@ -29,4 +29,39 @@ class ClassificadorRiscoServiceTest {
 
 		assertThat(service.classificar(respostas)).isEqualTo(ClassificacaoRisco.AZUL);
 	}
+
+	@Test
+	void deveClassificarVermelhoQuandoHaSangramento() {
+		RespostasTriagem respostas = new RespostasTriagem(false, false, false, true, false);
+
+		assertThat(service.classificar(respostas)).isEqualTo(ClassificacaoRisco.VERMELHO);
+	}
+
+	@Test
+	void deveClassificarAmareloQuandoHaFebreETontura() {
+		RespostasTriagem respostas = new RespostasTriagem(true, false, false, false, true);
+
+		assertThat(service.classificar(respostas)).isEqualTo(ClassificacaoRisco.AMARELO);
+	}
+
+	@Test
+	void deveClassificarVerdeQuandoHaApenasFebre() {
+		RespostasTriagem respostas = new RespostasTriagem(true, false, false, false, false);
+
+		assertThat(service.classificar(respostas)).isEqualTo(ClassificacaoRisco.VERDE);
+	}
+
+	@Test
+	void deveClassificarVerdeQuandoHaApenasTontura() {
+		RespostasTriagem respostas = new RespostasTriagem(false, false, false, false, true);
+
+		assertThat(service.classificar(respostas)).isEqualTo(ClassificacaoRisco.VERDE);
+	}
+
+	@Test
+	void criterioVermelhoDevePrevalecerSobreDorIntensa() {
+		RespostasTriagem respostas = new RespostasTriagem(false, true, true, false, false);
+
+		assertThat(service.classificar(respostas)).isEqualTo(ClassificacaoRisco.VERMELHO);
+	}
 }
