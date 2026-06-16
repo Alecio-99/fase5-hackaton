@@ -121,8 +121,10 @@ Camadas:
 
 ## 6. Links úteis
 
+- **Pasta no Drive (entrega — relatório e vídeos):** _a ser publicada_ — `https://drive.google.com/LINK_DA_PASTA`
 - **Repositório de código (GitHub):** https://github.com/Alecio-99/fase5-hackaton/tree/main
-- **Vídeo do pitch (YouTube, 8 min):** _a ser publicado_ — `https://youtu.be/ID_DO_VIDEO`
+- **Vídeo do pitch (YouTube, 8 min):** _a ser publicado_ — `https://youtu.be/ID_DO_PITCH`
+- **Vídeo do MVP funcionando (8 min):** _a ser publicado_ — `https://youtu.be/ID_DO_MVP`
 - **Contrato OpenAPI:** [`src/main/resources/openapi.yaml`](src/main/resources/openapi.yaml)
 - **Coleção Postman:** [`hackton-sus.postman_collection.json`](hackton-sus.postman_collection.json)
 
@@ -192,7 +194,7 @@ Para empacotar e rodar o JAR:
 java -jar target/hackton-0.0.1-SNAPSHOT.jar
 ```
 
-## Configuração (variáveis de ambiente)
+## 9. Configuração (variáveis de ambiente)
 
 Todas têm valores padrão para desenvolvimento — sobrescreva em produção. No fluxo Docker, são lidas do arquivo `.env` (criado automaticamente a partir de [`.env.example`](.env.example) na primeira execução do `deploy.sh`).
 
@@ -210,7 +212,7 @@ Todas têm valores padrão para desenvolvimento — sobrescreva em produção. N
 
 > Na primeira inicialização, se não houver usuários, um administrador padrão é criado automaticamente (`admin@sus.local` / `admin123`). **Altere essas credenciais em qualquer ambiente real.**
 
-## Autenticação
+## 10. Autenticação
 
 A API é stateless e protegida por **JWT**. Fluxo:
 
@@ -231,13 +233,13 @@ curl http://localhost:8080/api/v1/pacientes \
 
 A rota `/auth/login` é pública; as demais exigem o header `Authorization: Bearer <token>` e respeitam o perfil do usuário.
 
-## Documentação da API
+## 11. Documentação da API
 
 - **Swagger UI:** `http://localhost:8080/api/v1/swagger-ui.html`
 - **Contrato OpenAPI:** [`src/main/resources/openapi.yaml`](src/main/resources/openapi.yaml)
 - **Coleção Postman:** [`hackton-sus.postman_collection.json`](hackton-sus.postman_collection.json) (importe no Postman para testar todos os endpoints)
 
-## Endpoints principais
+## 12. Endpoints principais
 
 Base: `/api/v1`
 
@@ -261,7 +263,7 @@ Base: `/api/v1`
 | `GET/POST` | `/lista-espera` | Listar / cadastrar na lista de espera |
 | `GET` | `/dashboard` | Estatísticas gerenciais |
 
-## Regra de classificação de risco
+## 13. Regra de classificação de risco
 
 A triagem recebe respostas booleanas e devolve uma classificação no padrão do Protocolo de Manchester:
 
@@ -275,7 +277,7 @@ A triagem recebe respostas booleanas e devolve uma classificação no padrão do
 
 Implementação em [`ClassificadorRiscoService`](src/main/java/com/fase5/hackton/domain/service/ClassificadorRiscoService.java).
 
-## Modelo de dados
+## 14. Modelo de dados
 
 Tabelas criadas pela migration [`V1__create_core_schema.sql`](src/main/resources/db/migration/V1__create_core_schema.sql):
 
@@ -283,7 +285,7 @@ Tabelas criadas pela migration [`V1__create_core_schema.sql`](src/main/resources
 
 Há índices dedicados para priorização da fila (`idx_fila_prioridade`) e da lista de espera (`idx_lista_espera_prioridade`).
 
-## Testes
+## 15. Testes
 
 ```bash
 ./mvnw test
@@ -291,7 +293,7 @@ Há índices dedicados para priorização da fila (`idx_fila_prioridade`) e da l
 
 Os testes rodam sobre H2 (sem necessidade de MySQL). A suíte cobre os serviços de aplicação (Auth, Paciente, Unidade, Triagem, Fila, Consulta, Lista de Espera e Dashboard) — incluindo a priorização da fila, o cálculo da taxa de absenteísmo e o reagendamento automático — além da regra de classificação de risco e da carga de contexto da aplicação.
 
-## Estrutura do projeto
+## 16. Estrutura do projeto
 
 ```
 src/main/java/com/fase5/hackton/
